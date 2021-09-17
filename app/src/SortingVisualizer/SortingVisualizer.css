@@ -1,0 +1,24 @@
+.array-container {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    padding-bottom: 10px;
+}
+.array-bar {
+    width: 8px;
+    display: inline-block;
+    margin: 0 5px;
+}
+.generate-buttons {
+    padding-top: 50px;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding-bottom: 10px;
+}
+button {
+    margin: 1px;
+}
