@@ -2,7 +2,7 @@ import React from 'react';
 import * as algo from '../sortingAlgos/sortingAlgos'
 import './SortingVisualizer.css';
 
-const ANIMATION_SPEED_MS = 2;
+const ANIMATION_SPEED_MS = 10;
 const NUMBER_OF_ARRAY_BARS = 50;
 const PRIMARY_COLOR = '#444444';
 const SECONDARY_COLOR = 'red';
@@ -110,6 +110,7 @@ export default class SortingVisualizer extends React.Component {
                     <br/>
                     <button onClick={() => this.animate(algo.mergeSort)}>Merge Sort</button>
                     <button onClick={() => this.animate(algo.bubbleSort)}>Bubble Sort</button>
+                    <button onClick={() => this.animate(algo.quickSort)}>Quick Sort</button>
                 </div>
                 <br />
             </div>
