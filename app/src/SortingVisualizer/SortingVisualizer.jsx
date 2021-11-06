@@ -2,10 +2,10 @@ import React from 'react';
 import * as algo from '../sortingAlgos/sortingAlgos'
 import './SortingVisualizer.css';
 
-const ANIMATION_SPEED_MS = 10;
-const NUMBER_OF_ARRAY_BARS = 50;
-const PRIMARY_COLOR = '#444444';
-const SECONDARY_COLOR = 'red';
+let ANIMATION_SPEED_MS = 10;
+let NUMBER_OF_ARRAY_BARS = 50;
+let PRIMARY_COLOR = '#444444';
+let SECONDARY_COLOR = 'red';
 
 export default class SortingVisualizer extends React.Component {
     constructor(props) {
@@ -61,32 +61,40 @@ export default class SortingVisualizer extends React.Component {
         console.log(this.state.array);
     }
 
-    animate(algo) {
-        const animations = algo(this.state.array);
+    animate(algo, isMerge) {
+        let animations = algo(this.state.array);
         for (let i = 0; i < animations.length; i++) {
-            const arrayBars = document.getElementsByClassName('array-bar');
-            const isColorChange = i % 3 !== 2;
+            let arrayBars = document.getElementsByClassName('array-bar');
+            let isColorChange = i % 3 !== 2;
             if (isColorChange) {
-                const [barOneIdx, barTwoIdx] = animations[i];
-                const barOneStyle = arrayBars[barOneIdx].style;
-                const barTwoStyle = arrayBars[barTwoIdx].style;
-                const color = i % 3 === 0 ? SECONDARY_COLOR : PRIMARY_COLOR;
+                let [barOneIdx, barTwoIdx] = animations[i];
+                let barOneStyle = arrayBars[barOneIdx].style;
+                let barTwoStyle = arrayBars[barTwoIdx].style;
+                let color = i % 3 === 0 ? SECONDARY_COLOR : PRIMARY_COLOR;
                 setTimeout(() => {
                     barOneStyle.backgroundColor = color;
                     barTwoStyle.backgroundColor = color;
                 }, i * ANIMATION_SPEED_MS);
             } else {
+                let [barOneIdx, newHeightOne, barTwoIdx, newHeightTwo] = animations[i];
+                if(barOneIdx === -1 || barTwoIdx === -1) continue;
+                let barOneStyle = arrayBars[barOneIdx].style;
+                let barTwoStyle;
+                if(!isMerge) {
+                    barTwoStyle = arrayBars[barTwoIdx].style;
+                }
                 setTimeout(() => {
-                    const [barOneIdx, newHeight] = animations[i];
-                    const barOneStyle = arrayBars[barOneIdx].style;
-                    barOneStyle.height = `${newHeight}px`;
+                    barOneStyle.height = `${newHeightOne}px`;
+                    if(!isMerge) {
+                        barTwoStyle.height = `${newHeightTwo}px`;
+                    }
                 }, i * ANIMATION_SPEED_MS);
             }
         }
     }
 
     render() {
-        const { array } = this.state;
+        let { array } = this.state;
         return (
             <div>
                 <div className="array-container">
@@ -108,9 +116,10 @@ export default class SortingVisualizer extends React.Component {
                     <button onClick={() => this.reverseArray()}>Reverse</button> 
                     <button onClick={() => this.sortedArray()}>Sorted</button>
                     <br/>
-                    <button onClick={() => this.animate(algo.mergeSort)}>Merge Sort</button>
-                    <button onClick={() => this.animate(algo.bubbleSort)}>Bubble Sort</button>
-                    <button onClick={() => this.animate(algo.quickSort)}>Quick Sort</button>
+                    <button onClick={() => this.animate(algo.mergeSort, true)}>Merge Sort</button>
+                    <button onClick={() => this.animate(algo.bubbleSort, false)}>Bubble Sort</button>
+                    <button onClick={() => this.animate(algo.quickSort, false)}>Quick Sort</button>
+                    <button onClick={() => this.animate(algo.heapSort, false)}>Heap Sort</button>
                 </div>
                 <br />
             </div>
