@@ -4,8 +4,9 @@ import './SortingVisualizer.css';
 
 let ANIMATION_SPEED_MS = 10;
 let NUMBER_OF_ARRAY_BARS = 50;
-let PRIMARY_COLOR = '#444444';
-let SECONDARY_COLOR = 'red';
+let DEFAULT_COLOR = '#444444';
+let COMPARE_COLOR = 'blue';
+let SWAP_COLOR = 'red';
 
 export default class SortingVisualizer extends React.Component {
     constructor(props) {
@@ -15,8 +16,13 @@ export default class SortingVisualizer extends React.Component {
         };
     }
 
+    stopAnimations() {
+
+    }
+
     componentDidMount() {
         this.randomArray(this.generateArray());
+        this.stopAnimations();
     }
 
     generateArray() {
@@ -31,12 +37,14 @@ export default class SortingVisualizer extends React.Component {
         let array = this.generateArray();
         array.sort(() => 0.5 - Math.random());
         this.setState({ array });
+        this.stopAnimations();
     }
 
     nearlySortedArray() {
         let array = this.generateArray();
         array.sort(() => 0.9 - Math.random());
         this.setState({ array });
+        this.stopAnimations();
     }
 
     fewUniqueArray() {
@@ -46,49 +54,52 @@ export default class SortingVisualizer extends React.Component {
         }
         array.sort(() => 0.5 - Math.random());
         this.setState({ array });
+        this.stopAnimations();
     }
 
     reverseArray() {
         let array = this.generateArray();
         array.reverse();
         this.setState({ array });
+        this.stopAnimations();
     }
 
     sortedArray() {
         var array = this.state.array;
         array.sort((a, b) => a - b);
         this.setState({ array });
-        console.log(this.state.array);
+        this.stopAnimations();
     }
 
     animate(algo, isMerge) {
         let animations = algo(this.state.array);
+        console.log(animations);
         for (let i = 0; i < animations.length; i++) {
             let arrayBars = document.getElementsByClassName('array-bar');
-            let isColorChange = i % 3 !== 2;
-            if (isColorChange) {
-                let [barOneIdx, barTwoIdx] = animations[i];
-                let barOneStyle = arrayBars[barOneIdx].style;
-                let barTwoStyle = arrayBars[barTwoIdx].style;
-                let color = i % 3 === 0 ? SECONDARY_COLOR : PRIMARY_COLOR;
+            let [operation, barOneIdx, barTwoIdx, newHeightOne, newHeightTwo] = animations[i];
+            let barOneStyle = arrayBars[barOneIdx].style;
+            let barTwoStyle = arrayBars[barTwoIdx].style;
+            if(operation === "compare") {
                 setTimeout(() => {
-                    barOneStyle.backgroundColor = color;
-                    barTwoStyle.backgroundColor = color;
-                }, i * ANIMATION_SPEED_MS);
-            } else {
-                let [barOneIdx, newHeightOne, barTwoIdx, newHeightTwo] = animations[i];
-                if(barOneIdx === -1 || barTwoIdx === -1) continue;
-                let barOneStyle = arrayBars[barOneIdx].style;
-                let barTwoStyle;
-                if(!isMerge) {
-                    barTwoStyle = arrayBars[barTwoIdx].style;
-                }
+                    barOneStyle.backgroundColor = COMPARE_COLOR;
+                    barTwoStyle.backgroundColor = COMPARE_COLOR;
+                }, i*ANIMATION_SPEED_MS);
                 setTimeout(() => {
+                    barOneStyle.backgroundColor = DEFAULT_COLOR;
+                    barTwoStyle.backgroundColor = DEFAULT_COLOR;
+                }, (i+1)*ANIMATION_SPEED_MS);
+            }
+            else if(operation === "swap") {
+                setTimeout(() => {
+                    barOneStyle.backgroundColor = SWAP_COLOR;
+                    barTwoStyle.backgroundColor = SWAP_COLOR;
                     barOneStyle.height = `${newHeightOne}px`;
-                    if(!isMerge) {
-                        barTwoStyle.height = `${newHeightTwo}px`;
-                    }
-                }, i * ANIMATION_SPEED_MS);
+                    barTwoStyle.height = `${newHeightTwo}px`;
+                }, i*ANIMATION_SPEED_MS);
+                setTimeout(() => {
+                    barOneStyle.backgroundColor = DEFAULT_COLOR;
+                    barTwoStyle.backgroundColor = DEFAULT_COLOR;
+                }, (i+1)*ANIMATION_SPEED_MS);
             }
         }
     }
@@ -103,7 +114,7 @@ export default class SortingVisualizer extends React.Component {
                             className="array-bar"
                             key={idx}
                             style={{
-                                backgroundColor: PRIMARY_COLOR,
+                                backgroundColor: DEFAULT_COLOR,
                                 height: `${value}px`,
                             }}></div>
                     ))}

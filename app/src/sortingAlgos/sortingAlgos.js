@@ -18,18 +18,16 @@ let getPartition = (array, startIdx, endIdx, animations) => {
   let pivot = array[endIdx];
   let i = (startIdx - 1);
   for (let j = startIdx; j <= endIdx - 1; j++) {
-    animations.push([endIdx, j, endIdx]);
-    animations.push([endIdx, j, endIdx]);
+    animations.push(["compare", endIdx, j]);
     if (array[j] <= pivot) {
       i++;
       [array[i], array[j]] = [array[j], array[i]];
+      animations.push(["swap", i, j, array[i], array[j]]);
     }
-    animations.push([i, array[i], j, array[j]]);
   }
-  animations.push([endIdx, i+1, endIdx]);
-  animations.push([endIdx, i+1, endIdx]);
+  animations.push(["compare", endIdx, i+1]);
   [array[i+1], array[endIdx]] = [array[endIdx], array[i+1]];
-  animations.push([i+1, array[i+1], endIdx, array[endIdx]]);
+  animations.push(["swap", i+1, endIdx, array[i+1], array[endIdx]]);
   return i + 1;
 }
 
@@ -45,12 +43,11 @@ export let bubbleSort = array => {
   while(k<array.length) {
       let i=1;
       while(i<(array.length-k)) {
-          animations.push([i, i-1]);
-          animations.push([i, i-1]);
+          animations.push(["compare", i, i-1]);
           if(array[i-1]>array[i]) {
             [array[i-1],array[i]]=[array[i],array[i-1]];
+            animations.push(["swap", i, i-1, array[i], array[i-1]]);
           }
-            animations.push([i, array[i], i-1, array[i-1]]);
           i++;
       }
       k++;
@@ -86,44 +83,44 @@ let doMerge = (mainArray, startIdx, middleIdx, endIdx, auxiliaryArray, animation
   while (i <= middleIdx && j <= endIdx) {
     // These are the values that we're comparing; we push them once
     // to change their color.
-    animations.push([i, j]);
+    animations.push(["compare",i, j]);
     // These are the values that we're comparing; we push them a second
     // time to revert their color.
-    animations.push([i, j]);
+    // animations.push([i, j]);
     if (auxiliaryArray[i] <= auxiliaryArray[j]) {
       // We overwrite the value at index k in the original array with the
       // value at index i in the auxiliary array.
-      animations.push([k, auxiliaryArray[i]]);
+      animations.push(["swap", k, k, auxiliaryArray[i], auxiliaryArray[i]]);  
       mainArray[k++] = auxiliaryArray[i++];
     } else {
       // We overwrite the value at index k in the original array with the
       // value at index j in the auxiliary array.
-      animations.push([k, auxiliaryArray[j]]);
+      animations.push(["swap", k, k, auxiliaryArray[j], auxiliaryArray[j]]);  
       mainArray[k++] = auxiliaryArray[j++];
     }
   }
   while (i <= middleIdx) {
     // These are the values that we're comparing; we push them once
     // to change their color.
-    animations.push([i, i]);
+    animations.push(["compare", i, i]);
     // These are the values that we're comparing; we push them a second
     // time to revert their color.
-    animations.push([i, i]);
+    // animations.push([i, i]);
     // We overwrite the value at index k in the original array with the
     // value at index i in the auxiliary array.
-    animations.push([k, auxiliaryArray[i]]);
+    animations.push(["swap", k, k, auxiliaryArray[i], auxiliaryArray[i]]);  
     mainArray[k++] = auxiliaryArray[i++];
   }
   while (j <= endIdx) {
     // These are the values that we're comparing; we push them once
     // to change their color.
-    animations.push([j, j]);
+    animations.push(["compare", j, j]);
     // These are the values that we're comparing; we push them a second
     // time to revert their color.
-    animations.push([j, j]);
+    // animations.push([j, j]);
     // We overwrite the value at index k in the original array with the
     // value at index j in the auxiliary array.
-    animations.push([k, auxiliaryArray[j]]);
+    animations.push(["swap", k, k, auxiliaryArray[j], auxiliaryArray[j]]);  
     mainArray[k++] = auxiliaryArray[j++];
   }
 }
@@ -140,10 +137,8 @@ export let heapSort = array => {
     heapify(array, array.length, i, animations);
   }
   for (var i = array.length - 1; i > 0; i--) {
-    animations.push([i, 0]);
-    animations.push([i, 0]);
     [array[0], array[i]] = [array[i], array[0]];
-    animations.push([i, array[i], 0, array[0]]);
+    animations.push(["swap", i, 0, array[i], array[0]]);
     heapify(array, i, 0, animations);
   }
   console.log(array);
@@ -160,11 +155,10 @@ let heapify = (array, n, i, animations) => {
   if (right < n && array[right] > array[largest]) {
     largest = right;
   }
+  animations.push(["compare", i, largest]);  
   if (largest !== i) {
-    animations.push([i, largest]);
-    animations.push([i, largest]);
     [array[i], array[largest]] = [array[largest], array[i]];
-    animations.push([i, array[i], largest, array[largest]]);
+    animations.push(["swap", i, largest, array[i], array[largest]]);
     heapify(array, n, largest, animations);
   }
 }
