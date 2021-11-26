@@ -7,6 +7,7 @@ let NUMBER_OF_ARRAY_BARS = 50;
 let DEFAULT_COLOR = '#444444';
 let COMPARE_COLOR = 'blue';
 let SWAP_COLOR = 'red';
+let stop = false;
 
 export default class SortingVisualizer extends React.Component {
     constructor(props) {
@@ -17,7 +18,10 @@ export default class SortingVisualizer extends React.Component {
     }
 
     stopAnimations() {
-
+        stop = true;
+        setTimeout(() => {
+            stop = false;  
+        }, ANIMATION_SPEED_MS);
     }
 
     componentDidMount() {
@@ -75,6 +79,9 @@ export default class SortingVisualizer extends React.Component {
         let animations = algo(this.state.array);
         console.log(animations);
         for (let i = 0; i < animations.length; i++) {
+            if(stop === true) {
+                break;
+            }
             let arrayBars = document.getElementsByClassName('array-bar');
             let [operation, barOneIdx, barTwoIdx, newHeightOne, newHeightTwo] = animations[i];
             let barOneStyle = arrayBars[barOneIdx].style;
@@ -119,20 +126,23 @@ export default class SortingVisualizer extends React.Component {
                             }}></div>
                     ))}
                 </div>
-                <h3>Generate New Array</h3>
-                <div className="generate-buttons">
-                    <button onClick={() => this.randomArray()}>Random</button> 
-                    <button onClick={() => this.nearlySortedArray()}>Nearly Sorted</button> 
-                    <button onClick={() => this.fewUniqueArray()}>Few Unique</button> 
-                    <button onClick={() => this.reverseArray()}>Reverse</button> 
-                    <button onClick={() => this.sortedArray()}>Sorted</button>
-                    <br/>
-                    <button onClick={() => this.animate(algo.mergeSort, true)}>Merge Sort</button>
-                    <button onClick={() => this.animate(algo.bubbleSort, false)}>Bubble Sort</button>
-                    <button onClick={() => this.animate(algo.quickSort, false)}>Quick Sort</button>
-                    <button onClick={() => this.animate(algo.heapSort, false)}>Heap Sort</button>
+                <div className="button-container">
+                    <div className="generate-buttons">
+                        <h3>Generate New Array</h3>
+                        <button onClick={() => this.randomArray()}>Random</button> 
+                        <button onClick={() => this.nearlySortedArray()}>Nearly Sorted</button> 
+                        <button onClick={() => this.fewUniqueArray()}>Few Unique</button> 
+                        <button onClick={() => this.reverseArray()}>Reverse</button> 
+                        <button onClick={() => this.sortedArray()}>Sorted</button>
+                    </div>
+                    <div className="sort-buttons">
+                        <h3>Sorting Algorithms</h3>
+                        <button onClick={() => this.animate(algo.mergeSort, true)}>Merge Sort</button>
+                        <button onClick={() => this.animate(algo.bubbleSort, false)}>Bubble Sort</button>
+                        <button onClick={() => this.animate(algo.quickSort, false)}>Quick Sort</button>
+                        <button onClick={() => this.animate(algo.heapSort, false)}>Heap Sort</button>
+                    </div>
                 </div>
-                <br />
             </div>
         );
     }
